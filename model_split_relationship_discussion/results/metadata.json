@@ -1,0 +1,47 @@
+{
+  "datasets": [
+    "bbbp",
+    "freesolv",
+    "hiv",
+    "lipophilicity",
+    "solv"
+  ],
+  "fingerprints": [
+    "morgan",
+    "maccs",
+    "atompair"
+  ],
+  "split_methods": [
+    "bm_scaffold",
+    "butina_atompair",
+    "butina_maccs",
+    "butina_morgan",
+    "random"
+  ],
+  "config": {
+    "model_family": "RandomForest",
+    "classification_model": "RandomForestClassifier",
+    "regression_model": "RandomForestRegressor",
+    "classification_hyperparameters": {
+      "n_estimators": 500,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_features": 0.5,
+      "n_jobs": -1,
+      "random_state": 42,
+      "class_weight": "balanced"
+    },
+    "regression_hyperparameters": {
+      "n_estimators": 500,
+      "max_depth": null,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_features": 0.5,
+      "n_jobs": -1,
+      "random_state": 42
+    }
+  },
+  "total_runs": 315,
+  "failed_runs": []
+}

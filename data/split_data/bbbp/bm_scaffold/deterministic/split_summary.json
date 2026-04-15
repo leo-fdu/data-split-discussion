@@ -1,0 +1,28 @@
+{
+  "dataset_name": "bbbp",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/bbbp.csv",
+  "split_method": "bm_scaffold",
+  "seed": "deterministic",
+  "total_sample_count": 1955,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 1564,
+    "val": 196,
+    "test": 195
+  },
+  "fractions": {
+    "train": 0.8,
+    "val": 0.10025575447570333,
+    "test": 0.09974424552429667
+  },
+  "group_type": "scaffold",
+  "num_groups": 1094,
+  "num_scaffold_groups": 1094,
+  "group_counts": {
+    "train": 891,
+    "val": 94,
+    "test": 109
+  },
+  "num_no_scaffold_molecules": 95
+}

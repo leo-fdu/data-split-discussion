@@ -1,0 +1,29 @@
+{
+  "dataset_name": "hiv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/hiv.csv",
+  "split_method": "butina_maccs",
+  "seed": 0,
+  "total_sample_count": 40936,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 32749,
+    "val": 4094,
+    "test": 4093
+  },
+  "fractions": {
+    "train": 0.8000048856752003,
+    "val": 0.10000977135040062,
+    "test": 0.09998534297439907
+  },
+  "group_type": "cluster",
+  "num_groups": 2196,
+  "num_clusters": 2196,
+  "group_counts": {
+    "train": 1764,
+    "val": 216,
+    "test": 216
+  },
+  "fingerprint_type": "maccs",
+  "butina_distance_cutoff": 0.4
+}

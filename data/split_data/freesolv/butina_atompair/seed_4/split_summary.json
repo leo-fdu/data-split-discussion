@@ -1,0 +1,29 @@
+{
+  "dataset_name": "freesolv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/freesolv.csv",
+  "split_method": "butina_atompair",
+  "seed": 4,
+  "total_sample_count": 642,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 514,
+    "val": 64,
+    "test": 64
+  },
+  "fractions": {
+    "train": 0.8006230529595015,
+    "val": 0.09968847352024922,
+    "test": 0.09968847352024922
+  },
+  "group_type": "cluster",
+  "num_groups": 451,
+  "num_clusters": 451,
+  "group_counts": {
+    "train": 363,
+    "val": 44,
+    "test": 44
+  },
+  "fingerprint_type": "atompair",
+  "butina_distance_cutoff": 0.4
+}

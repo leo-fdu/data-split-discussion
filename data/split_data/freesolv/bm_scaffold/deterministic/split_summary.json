@@ -1,0 +1,28 @@
+{
+  "dataset_name": "freesolv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/freesolv.csv",
+  "split_method": "bm_scaffold",
+  "seed": "deterministic",
+  "total_sample_count": 642,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 435,
+    "val": 152,
+    "test": 55
+  },
+  "fractions": {
+    "train": 0.677570093457944,
+    "val": 0.2367601246105919,
+    "test": 0.08566978193146417
+  },
+  "group_type": "scaffold",
+  "num_groups": 63,
+  "num_scaffold_groups": 63,
+  "group_counts": {
+    "train": 55,
+    "val": 1,
+    "test": 7
+  },
+  "num_no_scaffold_molecules": 320
+}

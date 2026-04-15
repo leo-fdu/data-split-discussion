@@ -1,0 +1,29 @@
+{
+  "dataset_name": "hiv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/hiv.csv",
+  "split_method": "butina_atompair",
+  "seed": 1,
+  "total_sample_count": 40936,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 32749,
+    "val": 4094,
+    "test": 4093
+  },
+  "fractions": {
+    "train": 0.8000048856752003,
+    "val": 0.10000977135040062,
+    "test": 0.09998534297439907
+  },
+  "group_type": "cluster",
+  "num_groups": 20491,
+  "num_clusters": 20491,
+  "group_counts": {
+    "train": 16396,
+    "val": 2048,
+    "test": 2047
+  },
+  "fingerprint_type": "atompair",
+  "butina_distance_cutoff": 0.4
+}

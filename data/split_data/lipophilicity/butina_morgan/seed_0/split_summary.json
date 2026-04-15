@@ -1,0 +1,29 @@
+{
+  "dataset_name": "lipophilicity",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/lipophilicity.csv",
+  "split_method": "butina_morgan",
+  "seed": 0,
+  "total_sample_count": 4200,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 3360,
+    "val": 420,
+    "test": 420
+  },
+  "fractions": {
+    "train": 0.8,
+    "val": 0.1,
+    "test": 0.1
+  },
+  "group_type": "cluster",
+  "num_groups": 2068,
+  "num_clusters": 2068,
+  "group_counts": {
+    "train": 1657,
+    "val": 205,
+    "test": 206
+  },
+  "fingerprint_type": "morgan",
+  "butina_distance_cutoff": 0.4
+}

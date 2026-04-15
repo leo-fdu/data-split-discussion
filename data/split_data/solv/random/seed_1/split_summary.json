@@ -1,0 +1,19 @@
+{
+  "dataset_name": "solv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/solv.csv",
+  "split_method": "random",
+  "seed": 1,
+  "total_sample_count": 1117,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 893,
+    "val": 112,
+    "test": 112
+  },
+  "fractions": {
+    "train": 0.7994628469113697,
+    "val": 0.10026857654431513,
+    "test": 0.10026857654431513
+  }
+}

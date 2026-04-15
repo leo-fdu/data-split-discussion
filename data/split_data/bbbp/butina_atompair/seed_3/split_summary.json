@@ -1,0 +1,29 @@
+{
+  "dataset_name": "bbbp",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/bbbp.csv",
+  "split_method": "butina_atompair",
+  "seed": 3,
+  "total_sample_count": 1955,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 1564,
+    "val": 196,
+    "test": 195
+  },
+  "fractions": {
+    "train": 0.8,
+    "val": 0.10025575447570333,
+    "test": 0.09974424552429667
+  },
+  "group_type": "cluster",
+  "num_groups": 1162,
+  "num_clusters": 1162,
+  "group_counts": {
+    "train": 932,
+    "val": 115,
+    "test": 115
+  },
+  "fingerprint_type": "atompair",
+  "butina_distance_cutoff": 0.4
+}

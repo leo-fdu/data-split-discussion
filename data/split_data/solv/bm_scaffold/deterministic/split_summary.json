@@ -1,0 +1,28 @@
+{
+  "dataset_name": "solv",
+  "source_csv": "/Users/niqi/Desktop/cheminformatics/data_split_discussion/data/labelled_cleaned/solv.csv",
+  "split_method": "bm_scaffold",
+  "seed": "deterministic",
+  "total_sample_count": 1117,
+  "dropped_missing_smiles": 0,
+  "dropped_invalid_smiles": 0,
+  "counts": {
+    "train": 767,
+    "val": 253,
+    "test": 97
+  },
+  "fractions": {
+    "train": 0.6866606982990152,
+    "val": 0.22649955237242614,
+    "test": 0.08683974932855863
+  },
+  "group_type": "scaffold",
+  "num_groups": 269,
+  "num_scaffold_groups": 269,
+  "group_counts": {
+    "train": 239,
+    "val": 1,
+    "test": 29
+  },
+  "num_no_scaffold_molecules": 316
+}
