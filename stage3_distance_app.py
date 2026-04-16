@@ -417,7 +417,7 @@ def render_fg_block(title: str, count_dict: dict[str, int]) -> None:
 def main() -> None:
     """Run the Stage 3 pairwise distance explorer app."""
     st.set_page_config(page_title="Stage 3 Pairwise Distance Explorer", layout="wide")
-    st.title("Stage 3 Pairwise Distance Explorer")
+    st.title("Pairwise Distance Explorer")
     st.caption(
         "Interactively inspect one molecule pair at a time and see how "
         "scaffold distance, FG distance, and lambda combine into total distance."
@@ -450,9 +450,9 @@ def main() -> None:
             help="Used by the deterministic resample button and dataset-change auto sampling.",
         )
     )
-    random_button = st.sidebar.button("随机抽取两个分子", use_container_width=True)
-    seeded_button = st.sidebar.button("重新抽样（按当前 seed 逻辑）", use_container_width=True)
-    show_debug = st.sidebar.checkbox("显示详细 debug 信息", value=False)
+    random_button = st.sidebar.button("Randomly sample two molecules", use_container_width=True)
+    seeded_button = st.sidebar.button("Resample (using current seed)", use_container_width=True)
+    show_debug = st.sidebar.checkbox("Show detailed debug info", value=False)
     st.sidebar.caption(
         "First load of a large dataset may take time because all molecules are preprocessed "
         "into scaffolds and FG counts, then cached."
