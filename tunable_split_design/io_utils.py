@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 
-from .types import MoleculeTable
+from .data_types import MoleculeTable
 
 
 def smiles_to_mol(smiles: str) -> Chem.Mol:

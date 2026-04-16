@@ -12,7 +12,11 @@ from .distance import (
     compute_pairwise_fg_distance_matrix,
     compute_pairwise_scaffold_distance_matrix,
 )
-from .fg_features import build_fg_count_matrix, build_leaf_functional_group_vocabulary
+from .fg_features import (
+    build_fg_count_matrix,
+    build_leaf_functional_group_vocabulary,
+    validate_functional_group_vocabulary,
+)
 from .io_utils import load_molecule_table
 from .scaffold import extract_expanded_scaffold
 from .split import clusters_to_splits
@@ -48,6 +52,7 @@ def main(argv: list[str] | None = None) -> None:
         scaffolds = [extract_expanded_scaffold(mol) for mol in table.mols]
         vocabulary = build_leaf_functional_group_vocabulary()
         fg_count_matrix, vocabulary = build_fg_count_matrix(table.mols, vocabulary=vocabulary)
+        vocabulary_summary = validate_functional_group_vocabulary(vocabulary, mols=table.mols)
         scaffold_distance_result = compute_pairwise_scaffold_distance_matrix(scaffolds)
         fg_distance_matrix = compute_pairwise_fg_distance_matrix(fg_count_matrix)
         total_distance_matrix = combine_distances(
@@ -73,6 +78,11 @@ def main(argv: list[str] | None = None) -> None:
         for scaffold in scaffolds:
             print(f"  - {scaffold.scaffold_smiles or '<empty>'}")
         print(f"Leaf FG vocabulary size: {vocabulary.size}")
+        print(
+            "FG vocabulary validation: "
+            f"never-hit={len(vocabulary_summary['never_hit_labels'])}, "
+            f"top-hit={vocabulary_summary['top_hit_entries'][:3]}"
+        )
         print(f"Number of clusters at cutoff=0.45: {len(clusters)}")
         print(f"Split summary: {split_result.summary}")
         print(f"Generated {len(sweep_results)} sweep configurations.")

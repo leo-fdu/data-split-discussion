@@ -6,8 +6,12 @@ from collections import deque
 from rdkit import Chem
 from rdkit.Chem import rdFMCS
 
-from .config import DEFAULT_MAX_MCS_ROUNDS, MAX_SUBSTRUCT_MATCHES
-from .types import (
+from .config import (
+    DEFAULT_MAX_MCS_ROUNDS,
+    DEFAULT_MCS_TIMEOUT_SECONDS,
+    MAX_SUBSTRUCT_MATCHES,
+)
+from .data_types import (
     ScaffoldExtractionResult,
     ScaffoldMatchResult,
     ScaffoldMatchRound,
@@ -66,11 +70,11 @@ def extract_expanded_scaffold(mol: Chem.Mol) -> ScaffoldExtractionResult:
         bondsToUse=list(scaffold_bond_indices),
         canonical=True,
     )
-    scaffold_mol = Chem.MolFromSmiles(scaffold_smiles)
-    if scaffold_mol is None:
-        raise ValueError(
-            "RDKit failed to rebuild the extracted expanded scaffold from fragment SMILES."
-        )
+    scaffold_mol = _build_scaffold_submol(
+        mol=mol,
+        atom_indices=scaffold_atom_indices,
+        bond_indices=scaffold_bond_indices,
+    )
 
     return ScaffoldExtractionResult(
         scaffold_mol=scaffold_mol,
@@ -321,6 +325,74 @@ def _path_to_bond_indices(mol: Chem.Mol, atom_path: tuple[int, ...]) -> tuple[in
     return tuple(bond_indices)
 
 
+def _build_scaffold_submol(
+    mol: Chem.Mol,
+    atom_indices: tuple[int, ...],
+    bond_indices: tuple[int, ...],
+) -> Chem.Mol:
+    """
+    Build one scaffold submolecule directly from selected atoms and bonds.
+
+    This avoids depending on `MolFragmentToSmiles -> MolFromSmiles` round-trips
+    for the actual scaffold graph used downstream.
+    """
+    if not atom_indices:
+        return Chem.Mol()
+
+    old_to_new_atom: dict[int, int] = {}
+    rw_mol = Chem.RWMol()
+
+    for old_atom_idx in atom_indices:
+        atom = mol.GetAtomWithIdx(old_atom_idx)
+        new_atom = Chem.Atom(atom.GetAtomicNum())
+        new_atom.SetFormalCharge(atom.GetFormalCharge())
+        new_atom.SetChiralTag(atom.GetChiralTag())
+        new_atom.SetNoImplicit(atom.GetNoImplicit())
+        new_atom.SetNumExplicitHs(atom.GetNumExplicitHs())
+        new_atom.SetNumRadicalElectrons(atom.GetNumRadicalElectrons())
+        new_atom.SetIsAromatic(atom.GetIsAromatic())
+        new_atom.SetIsotope(atom.GetIsotope())
+        new_idx = rw_mol.AddAtom(new_atom)
+        old_to_new_atom[old_atom_idx] = new_idx
+
+    for old_bond_idx in bond_indices:
+        bond = mol.GetBondWithIdx(old_bond_idx)
+        begin_idx = old_to_new_atom[bond.GetBeginAtomIdx()]
+        end_idx = old_to_new_atom[bond.GetEndAtomIdx()]
+        rw_mol.AddBond(begin_idx, end_idx, bond.GetBondType())
+        new_bond = rw_mol.GetBondBetweenAtoms(begin_idx, end_idx)
+        if new_bond is None:
+            raise ValueError("Failed to rebuild a selected scaffold bond.")
+        new_bond.SetStereo(bond.GetStereo())
+        new_bond.SetBondDir(bond.GetBondDir())
+        new_bond.SetIsAromatic(bond.GetIsAromatic())
+
+    scaffold_mol = rw_mol.GetMol()
+    scaffold_mol.UpdatePropertyCache(strict=False)
+
+    sanitize_result = Chem.SanitizeMol(scaffold_mol, catchErrors=True)
+    if sanitize_result == Chem.SanitizeFlags.SANITIZE_NONE:
+        return scaffold_mol
+
+    # Fallback: clear aromatic bookkeeping via Kekulize and keep the direct graph.
+    fallback_mol = Chem.Mol(scaffold_mol)
+    try:
+        Chem.Kekulize(fallback_mol, clearAromaticFlags=True)
+        fallback_mol.UpdatePropertyCache(strict=False)
+        return fallback_mol
+    except Exception:
+        pass
+
+    # Last resort: keep the unsanitized direct subgraph if its property cache is usable.
+    try:
+        scaffold_mol.UpdatePropertyCache(strict=False)
+        return scaffold_mol
+    except Exception as exc:
+        raise ValueError(
+            "Failed to build scaffold submolecule directly from selected atoms and bonds."
+        ) from exc
+
+
 def _kekulized_copy(mol: Chem.Mol) -> Chem.Mol:
     copied_mol = Chem.Mol(mol)
     Chem.Kekulize(copied_mol, clearAromaticFlags=True)
@@ -387,7 +459,7 @@ def _build_active_submol(
 def _run_exact_bond_mcs(mol_a: Chem.Mol, mol_b: Chem.Mol) -> rdFMCS.MCSResult:
     params = rdFMCS.MCSParameters()
     params.MaximizeBonds = True
-    params.Timeout = 0
+    params.Timeout = DEFAULT_MCS_TIMEOUT_SECONDS
     params.AtomTyper = rdFMCS.AtomCompare.CompareElements
     params.BondTyper = rdFMCS.BondCompare.CompareOrderExact
     return rdFMCS.FindMCS([mol_a, mol_b], params)

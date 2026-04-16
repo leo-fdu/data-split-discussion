@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 from .config import FLOAT_TOLERANCE, SPLIT_NAMES
-from .types import AssignedCluster, SplitResult
+from .data_types import AssignedCluster, SplitResult
 
 
 def clusters_to_splits(

@@ -7,7 +7,7 @@ import numpy as np
 from .clustering import run_butina_clustering, summarize_clusters
 from .distance import combine_distances
 from .split import clusters_to_splits
-from .types import SweepResult
+from .data_types import SweepResult
 
 
 def generate_param_grid(min_value: float, max_value: float, gap: float) -> list[float]:

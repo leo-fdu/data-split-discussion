@@ -14,7 +14,7 @@ from .config import (
 )
 from .io_utils import load_distance_cache, save_distance_cache
 from .scaffold import compute_scaffold_similarity
-from .types import (
+from .data_types import (
     PairwiseComputationFailure,
     PairwiseDistanceMatrixResult,
     ScaffoldExtractionResult,

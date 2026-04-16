@@ -7,7 +7,7 @@ from rdkit import Chem
 from rdkit.Chem import FunctionalGroups
 
 from .config import MAX_SUBSTRUCT_MATCHES
-from .types import (
+from .data_types import (
     FunctionalGroupCountResult,
     FunctionalGroupVocabulary,
     FunctionalGroupVocabularyEntry,
@@ -20,12 +20,13 @@ def build_leaf_functional_group_vocabulary() -> FunctionalGroupVocabulary:
     Build a fixed-order leaf-level RDKit functional-group vocabulary.
 
     Only leaf nodes from the RDKit FunctionalGroups hierarchy are retained.
-    Entries are ordered deterministically by `(label, name, smarts)`.
+    Entries are ordered deterministically by `(label, name, smarts)`. Invalid
+    leaf nodes with missing pattern, SMARTS, or label information are skipped.
     """
     hierarchy = FunctionalGroups.BuildFuncGroupHierarchy()
     leaves = []
     for root in hierarchy:
-        leaves.extend(_collect_leaf_nodes(root))
+        leaves.extend(_collect_valid_leaf_nodes(root))
 
     leaves.sort(key=lambda node: (node.label, node.name, node.smarts))
     entries = tuple(
@@ -39,6 +40,61 @@ def build_leaf_functional_group_vocabulary() -> FunctionalGroupVocabulary:
         for index, node in enumerate(leaves)
     )
     return FunctionalGroupVocabulary(entries=entries)
+
+
+def validate_functional_group_vocabulary(
+    vocabulary: FunctionalGroupVocabulary,
+    mols: list[Chem.Mol] | tuple[Chem.Mol, ...] | None = None,
+) -> dict[str, object]:
+    """
+    Return a lightweight deterministic summary of one FG vocabulary.
+
+    When molecules are provided, the summary also reports how many molecules hit
+    each FG dimension, which FG labels never hit, and the top-hit entries.
+    """
+    summary: dict[str, object] = {
+        "vocabulary_size": vocabulary.size,
+        "labels": [entry.label for entry in vocabulary.entries],
+        "names": [entry.name for entry in vocabulary.entries],
+        "smarts": [entry.smarts for entry in vocabulary.entries],
+    }
+    if mols is None:
+        return summary
+
+    count_matrix, _ = build_fg_count_matrix(mols, vocabulary=vocabulary)
+    molecule_hit_counts = np.count_nonzero(count_matrix > 0, axis=0).astype(int)
+
+    hits_per_fg = {
+        entry.label: int(molecule_hit_counts[entry.index])
+        for entry in vocabulary.entries
+    }
+    never_hit_labels = [
+        entry.label
+        for entry in vocabulary.entries
+        if molecule_hit_counts[entry.index] == 0
+    ]
+    top_hit_entries = sorted(
+        (
+            {
+                "label": entry.label,
+                "name": entry.name,
+                "smarts": entry.smarts,
+                "num_molecules_hit": int(molecule_hit_counts[entry.index]),
+            }
+            for entry in vocabulary.entries
+        ),
+        key=lambda item: (-item["num_molecules_hit"], item["label"], item["name"], item["smarts"]),
+    )[:10]
+
+    summary.update(
+        {
+            "num_molecules": len(mols),
+            "molecule_hit_counts": hits_per_fg,
+            "never_hit_labels": never_hit_labels,
+            "top_hit_entries": top_hit_entries,
+        }
+    )
+    return summary
 
 
 def count_leaf_functional_groups(
@@ -105,10 +161,22 @@ def build_fg_count_matrix(
     return matrix, active_vocabulary
 
 
-def _collect_leaf_nodes(node: FunctionalGroups.FGHierarchyNode) -> list[FunctionalGroups.FGHierarchyNode]:
+def _collect_valid_leaf_nodes(
+    node: FunctionalGroups.FGHierarchyNode,
+) -> list[FunctionalGroups.FGHierarchyNode]:
     if not node.children:
-        return [node]
+        return [node] if _is_valid_leaf_node(node) else []
     leaves = []
     for child in sorted(node.children, key=lambda item: (item.label, item.name, item.smarts)):
-        leaves.extend(_collect_leaf_nodes(child))
+        leaves.extend(_collect_valid_leaf_nodes(child))
     return leaves
+
+
+def _is_valid_leaf_node(node: FunctionalGroups.FGHierarchyNode) -> bool:
+    pattern = node.pattern
+    return bool(
+        pattern is not None
+        and node.smarts
+        and node.label
+        and pattern.GetNumAtoms() > 0
+    )

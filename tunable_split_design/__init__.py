@@ -1,5 +1,10 @@
 from .clustering import distance_matrix_to_condensed, run_butina_clustering, summarize_clusters
-from .config import DEFAULT_MAX_MCS_ROUNDS, DEFAULT_NUMPY_DTYPE, DEFAULT_SPLIT_FRACTIONS
+from .config import (
+    DEFAULT_MAX_MCS_ROUNDS,
+    DEFAULT_MCS_TIMEOUT_SECONDS,
+    DEFAULT_NUMPY_DTYPE,
+    DEFAULT_SPLIT_FRACTIONS,
+)
 from .distance import (
     combine_distance_pair,
     combine_distances,
@@ -14,6 +19,7 @@ from .fg_features import (
     build_fg_count_matrix,
     build_leaf_functional_group_vocabulary,
     count_leaf_functional_groups,
+    validate_functional_group_vocabulary,
 )
 from .io_utils import (
     canonicalize_smiles,
@@ -29,7 +35,7 @@ from .io_utils import (
 from .scaffold import compute_scaffold_similarity, extract_expanded_scaffold
 from .split import clusters_to_splits, compute_target_counts
 from .sweep import generate_param_grid, sweep_tunable_splits
-from .types import (
+from .data_types import (
     AssignedCluster,
     FunctionalGroupCountResult,
     FunctionalGroupVocabulary,
@@ -47,6 +53,7 @@ from .types import (
 __all__ = [
     "AssignedCluster",
     "DEFAULT_MAX_MCS_ROUNDS",
+    "DEFAULT_MCS_TIMEOUT_SECONDS",
     "DEFAULT_NUMPY_DTYPE",
     "DEFAULT_SPLIT_FRACTIONS",
     "FunctionalGroupCountResult",
@@ -89,4 +96,5 @@ __all__ = [
     "smiles_to_mol",
     "summarize_clusters",
     "sweep_tunable_splits",
+    "validate_functional_group_vocabulary",
 ]
